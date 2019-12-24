@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nvi name="Display.Driver" title="${{title}}" version="${{version}}" versionText="${{version}}" timestamp="2012-05-04T19:56:35" disposition="critical" installerMin="2.1002.22.0">
+	<strings>
+		<string name="version" value="302.61"/>
+		<localized locale="0x0409">
+			<string name="title" value="Graphics Driver"/>
+			<string name="arpDisplayName" value="NVIDIA ${{title}} ${{version}}"/>
+			<string name="failedOSCheck" value="This ${{title}} is not compatible with this version of Windows."/>
+		</localized>
+	</strings>
+	<description/>
+	<constraints>
+		<os min="6.2" name="osVersionCheck" text="${{failedOSCheck}}"/>
+		<platforms list="arm32" name="platformCheck" text="${{failedOSCheck}}"/>
+	</constraints>
+	<dependencies>
+		<package type="requires" package="Power.Driver"/>
+		<package type="requires" package="GPIO.Driver"/>
+		<package type="requires" package="I2C.Driver"/>
+		<package type="requires" package="Memory.Driver"/>
+	</dependencies>
+	<extensions/>
+	<properties>
+		<bool name="FixedInstallLocation" value="true"/>
+		<string name="InstallLocation" value=""/>
+		<string name="ArpDisplayName" value="${{arpDisplayName}}"/>
+	</properties>
+	<manifest>
+		<file name="DisplayDriver.nvi"/>
+		<file name="nv_disp.inf"/><file name="dbInstaller.exe"/><file name="nvDecMFTMjpeg.dll"/><file name="nvDecMFTMpeg4.dll"/><file name="nvEncMFTH264.dll"/><file name="nvEncMFTVC1.dll"/><file name="nvEncodeAPI.dll"/><file name="nvapi.dll"/><file name="nvd3dum.dll"/><file name="nvdrsdb.bin"/><file name="nvlddmkm.sys"/><file name="nv_t20_display_ref.cat"/></manifest>
+	<phases>
+		<device phase="installAllDrivers" fixedProgress="10" deviceProgress="150" autoTick="200">
+			<inf name="*.inf"/>
+		</device>
+		<confirm phase="Confirm-install" when="install">
+			<fileExists target="${{SystemDirectory}}\nvapi.dll"/>
+		</confirm>
+		<standard phase="copyDLLs">
+			<copyFile target="${{SystemDirectory}}\nvDecMFTMpeg4.dll" source="nvDecMFTMpeg4.dll"/>
+			<copyFile target="${{SystemDirectory}}\nvEncMFTH264.dll" source="nvEncMFTH264.dll"/>
+			<copyFile target="${{SystemDirectory}}\nvEncMFTVC1.dll" source="nvEncMFTVC1.dll"/>
+			<copyFile target="${{SystemDirectory}}\nvEncodeAPI.dll" source="nvEncodeAPI.dll"/>
+		</standard>
+		<standard phase="registerDLLs">
+			<registerDll target="${{SystemDirectory}}\nvDecMFTMpeg4.dll"/>
+			<registerDll target="${{SystemDirectory}}\nvEncMFTH264.dll"/>
+			<registerDll target="${{SystemDirectory}}\nvEncMFTVC1.dll"/>
+		</standard>
+		<standard phase="deleteComponents" when="uninstall" onError="ignore">
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvModes.dat"/>
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvModes.001"/>
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvdrsdb0.bin"/>
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvdrsdb1.bin"/>
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvdrssel.bin"/>
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvdrswr.ilk"/>
+			<deleteFile target="${{CommonAppData}}\NVIDIA Corporation\DRS\nvdrswr.lk"/>
+			<deleteDirectory target="${{CommonAppData}}\NVIDIA Corporation\DRS"/>
+			<deleteDirectory target="${{CommonAppData}}\NVIDIA Corporation"/>
+			<deleteFile target="${{CommonAppData}}\nvModes.dat"/>
+			<deleteFile target="${{CommonAppData}}\nvModes.001"/>
+			<deleteFile target="${{SystemDirectory}}\nvdrsdb0.bin"/>
+			<deleteFile target="${{SystemDirectory}}\nvdrsdb1.bin"/>
+			<deleteFile target="${{SystemDirectory}}\nvdrssel.bin"/>
+			<deleteFile target="${{SystemDirectory}}\nvdrswr.ilk"/>
+			<deleteFile target="${{SystemDirectory}}\nvdrswr.lk"/>
+		</standard>
+	</phases>
+</nvi>
